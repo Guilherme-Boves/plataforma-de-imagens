@@ -23,8 +23,17 @@ app.post("/user", async (req, res) => {
     
     let {name, email, password} = req.body;
 
+    if(name == '' || email == '' || password == ''){
+        res.sendStatus(400);
+        return;
+    }
     try{
-
+        let user = await User.findOne({"email": email})
+        if(user != undefined){
+            res.statusCode = 400;
+            res.json({error: "E-mail já cadastrado"})
+            return;
+        }
         let newUser =  new User({name, email, password});
         await newUser.save();
         res.json({email});
